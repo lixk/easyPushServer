@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="topic.js"></script>
+</head>
+<body>
+  <script type="text/javascript">
+    var ws = new WebSocket("ws://127.0.0.1:8080/myapp");
+    // subscribe a topic
+    ws.subscribe('mytopic', function(data){
+      alert(data);
+    });
+    // unsubscribe the topic
+    // ws.unsubscribe('mytopic');
+    
+  </script>
+</body>
+</html>
