@@ -1,7 +1,7 @@
 import json
 from configparser import ConfigParser
 from queue import Queue
-from threading import Thread
+import threading
 
 from bottle import request, Bottle, abort, run
 from gevent import monkey
@@ -23,8 +23,9 @@ else:
     websocket_route = '/'
 server_port = config.getint("server", "port", fallback=8080)
 server_password = config.get("server", "password", fallback='')
-server_type = config.get("server", "type", fallback='')
+server_type = config.get("server", "type", fallback='gevent')
 
+condition = threading.Condition()
 app = Bottle()
 message_queue = Queue()
 topics = {}
@@ -84,10 +85,12 @@ def websocket_handler():
         try:
             data = ws.receive()
             if not data:
-                # remove client from the topics
+                # remove error client from the topics
                 for clients in topics.values():
+                    condition.acquire()
                     if ws in clients:
                         clients.remove(ws)
+                    condition.release()
                 break
 
             data = json.loads(data)
@@ -99,15 +102,22 @@ def websocket_handler():
                 # if this topic not in the topics dict, add it to the topics dict
                 if topic not in topics:
                     topics[topic] = []
+                condition.acquire()
                 if ws not in topics[topic]:
                     topics[topic].append(ws)
+                condition.release()
             elif 'unsubscribe' == action:
+                condition.acquire()
                 if ws in topics[topic]:
                     topics[topic].remove(ws)
+                condition.release()
             else:
                 ws.send('error: "action" field can only be "subscribe" or "unsubscribe"')
         except Exception as e:
-            ws.send('error: ' + str(e))
+            try:
+                ws.send('error: ' + str(e))
+            except WebSocketError as e:
+                print('WebSocketError: ' + str(e))
 
 
 def push_message():
@@ -116,24 +126,26 @@ def push_message():
 
     """
     while True:
-        entity = message_queue.get()
-        clients = topics.get(entity.topic, [])
-        error_clients = []
+        message = message_queue.get()
+        condition.acquire()
+
+        clients = topics.get(message.topic)
+        if not clients:
+            continue
 
         # push message to each client
-        for client in clients:
+        for i in range(len(clients) - 1, -1, -1):
+            client = clients[i]
             try:
-                client.send(entity.to_json_string())
+                client.send(message.to_json_string())
             except WebSocketError:
-                error_clients.append(client)
+                # remove error connection
+                clients.pop(i)
 
-        # remove incorrect connections
-        for client in error_clients:
-            clients.remove(client)
-
+        condition.release()
 
 # start a new thread to push message
-Thread(target=push_message).start()
+threading.Thread(target=push_message).start()
 
 # start server
 if __name__ == '__main__':
