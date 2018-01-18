@@ -16,8 +16,8 @@ config = ConfigParser()
 config.read('server.ini')
 server_name = config.get("server", "name", fallback='')
 if server_name:
-    publish_route = '/' + server_name + '/publish'
-    websocket_route = '/' + server_name
+    publish_route = '/{}/publish'.format(server_name)
+    websocket_route = '/{}'.format(server_name)
 else:
     publish_route = '/publish'
     websocket_route = '/'
@@ -143,6 +143,7 @@ def push_message():
                 clients.pop(i)
 
         condition.release()
+
 
 # start a new thread to push message
 threading.Thread(target=push_message).start()

@@ -21,7 +21,9 @@ def on_open(ws):
 
 
 def run():
-    ws = websocket.WebSocketApp("ws://localhost:8080/myapp",
+    # ws = websocket.WebSocketApp("ws://118.190.45.196:8888/websocket",
+    ws = websocket.WebSocketApp("ws://192.168.56.101:8888/websocket",
+    # ws = websocket.WebSocketApp("ws://10.41.2.20:8888/websocket",
                                 on_message=on_message,
                                 on_error=on_error,
                                 on_close=on_close)
@@ -33,3 +35,4 @@ if __name__ == "__main__":
     pool = futures.ThreadPoolExecutor(max_workers=500)
     for i in range(500):
         pool.submit(run)
+        print(i)

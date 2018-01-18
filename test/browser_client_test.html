@@ -7,11 +7,11 @@
   <script type="text/javascript">
     var ws = new WebSocket("ws://127.0.0.1:8080/myapp");
     // subscribe a topic
-    ws.subscribe('mytopic', function(data){
+    ws.subscribe('testTopic', function(data){
       alert(data);
     });
     // unsubscribe the topic
-    // ws.unsubscribe('mytopic');
+    // ws.unsubscribe('testTopic');
     
   </script>
 </body>
