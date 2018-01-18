@@ -53,8 +53,8 @@ print(r.read().decode('utf-8'))
 ```python
 {"code": 200, "data": "success!"}
 ```
-此时浏览器界面弹出alert对话框
-![推送结果](https://github.com/lixk/easyPushServer/blob/master/test/screenshot/alert.jpg)  
-表明推送成功。
+
+此时浏览器界面弹出alert对话框![推送结果](https://github.com/lixk/easyPushServer/blob/master/test/screenshot/alert.jpg)表明推送成功。
+
 --- 
 本推送服务器支持多主题，多服务端同时推送消息，内部采用阻塞队列处理。可应用于需要实时推送数据的场景。
