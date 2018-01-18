@@ -1,6 +1,6 @@
 # easyPushServer
 基于bottle和gevent-websocket的简单消息推送服务器  
-### 工作原理：  
+### 工作原理  
 通过HTTP的POST或者GET方式向消息推送服务器发送消息，消息包括主题(topic)和数据(data)两部分。然后客户端通过websocket协议连接消息推送服务器并订阅对应主题。当有数据发送到推送服务器时，推送服务器通过websocket推送至客户端，由此实现数据的实时推送功能。
 
 在`server.ini`文件中可以定义推送服务器的应用名称，端口号，推送密码，服务器类型等，示例如下：
@@ -55,6 +55,6 @@ print(r.read().decode('utf-8'))
 ```
 此时浏览器界面弹出alert对话框： 
 ![推送结果](https://github.com/lixk/easyPushServer/blob/master/test/screenshot/alert.jpg)  
-表明推送成功。
-
+表明推送成功。  
+---  
 本推送服务器支持多主题，多服务端同时推送消息，内部采用阻塞队列处理。可应用于需要实时推送数据的场景。
