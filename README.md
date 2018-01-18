@@ -38,7 +38,8 @@ password=123456
 </body>
 </html>
 ```
-注意，需要引入`topic.js`文件，该文件为浏览器WebSocket原型添加了主题订阅和取消订阅功能
+注意，需要引入`topic.js`文件，该文件为浏览器WebSocket原型添加了主题订阅和取消订阅功能 
+ 
 3. 推送消息到推送服务器，以python程序为例：
 ```python
 from urllib import request, parse
@@ -53,7 +54,7 @@ print(r.read().decode('utf-8'))
 {"code": 200, "data": "success!"}
 ```
 此时浏览器界面弹出alert对话框：
-![推送结果]()
+![推送结果]('https://github.com/lixk/easyPushServer/blob/master/test/screenshot/alert.jpg')  
 表明推送成功。
 
 本推送服务器支持多主题，多服务端同时推送消息，内部采用阻塞队列处理。可应用于需要实时推送数据的场景。
